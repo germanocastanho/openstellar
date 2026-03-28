@@ -1,0 +1,70 @@
+name: Update Galaxy Data
+
+on:
+  schedule:
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Validate secrets
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "GH_TOKEN secret not set"; exit 1; fi
+
+      - name: Install Python deps
+        run: uv pip install -r requirements.txt --system
+
+      - name: Install Node deps
+        run: npm ci
+
+      - name: Run indexer
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: python -m indexer.main
+
+      - name: Validate indexer output
+        run: |
+          test -s data/nodes.json || (echo "data/nodes.json is empty or missing" && exit 1)
+          test -s data/links.json || (echo "data/links.json is empty or missing" && exit 1)
+
+      - name: Compute 3D layout
+        run: node pipeline/layout.js
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Compress data files and copy to dist
+        run: |
+          mkdir -p dist/data
+          for f in data/nodes.json data/links.json data/positions.json; do
+            gzip -9 -c "$f" > "dist/data/$(basename $f).gz"
+          done
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true

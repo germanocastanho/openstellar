@@ -1,0 +1,31 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage/
+
+# Node
+node_modules/
+dist/
+
+# Data (gerado pelo pipeline) — apenas no root, não em public/data/
+/data/
+
+# Secrets
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Specs e artefatos de IA (podem revelar detalhes de arquitetura/estratégia)
+docs/
+.superpowers/
+
+# Qualquer arquivo de configuração local que possa conter paths sensíveis
+*.local

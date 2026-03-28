@@ -1,0 +1,41 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-base: #030611;
+  --bg-accent: #07142f;
+  --surface: rgba(12, 18, 38, 0.84);
+  --surface-strong: rgba(14, 22, 46, 0.96);
+  --surface-soft: rgba(14, 22, 46, 0.68);
+  --border-subtle: rgba(142, 197, 255, 0.28);
+  --border-strong: rgba(142, 197, 255, 0.62);
+  --text-primary: #edf3ff;
+  --text-muted: rgba(237, 243, 255, 0.76);
+  --text-faint: rgba(237, 243, 255, 0.58);
+  --accent: #8ec5ff;
+  --accent-soft: rgba(142, 197, 255, 0.16);
+  --accent-warm: rgba(255, 220, 130, 0.92);
+  --danger-soft: rgba(255, 115, 115, 0.2);
+  --focus-ring: 0 0 0 3px rgba(142, 197, 255, 0.25);
+}
+
+body {
+  background:
+    radial-gradient(circle at 15% 10%, var(--bg-accent) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(18, 34, 70, 0.55) 0%, transparent 38%),
+    var(--bg-base);
+  color: var(--text-primary);
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+#scene-nav-info {
+  font-size: 18px !important;
+  letter-spacing: 0.5px;
+  line-height: 1.8 !important;
+  opacity: 0.85 !important;
+}

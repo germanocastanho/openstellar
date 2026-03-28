@@ -1,0 +1,41 @@
+name: Deploy Frontend Only
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: current-data
+
+      - uses: actions/checkout@v4
+        with:
+          path: src-code
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install and build
+        working-directory: src-code
+        run: npm ci && npm run build
+
+      - name: Restore data files from gh-pages
+        run: |
+          mkdir -p src-code/dist/data
+          cp current-data/data/*.gz src-code/dist/data/ 2>/dev/null || true
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./src-code/dist
+          force_orphan: true
